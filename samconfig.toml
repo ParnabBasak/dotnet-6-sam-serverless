@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "dotnet-6-sam-sample"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1i00amvxx7xag"
+s3_prefix = "dotnet-6-sam-sample"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

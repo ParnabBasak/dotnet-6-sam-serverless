@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Sample SAM Template for dotnet-6-sam-sample
+
+  '
+Globals:
+  Function:
+    Timeout: 10
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: HelloWorldFunction
+      Handler: HelloWorld::HelloWorld.Function::FunctionHandler
+      Runtime: dotnet6
+      Architectures:
+      - x86_64
+      MemorySize: 256
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: BookingsDBTable
+      Policies:
+      - AWSLambdaExecute
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: BookingsDBTable
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /booking/{id}
+            Method: get
+    Metadata:
+      SamResourceId: HelloWorldFunction
+  BookingsDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BookingsDBTable
+      AttributeDefinitions:
+      - AttributeName: Pk
+        AttributeType: S
+      - AttributeName: Sk
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Pk
+        KeyType: HASH
+      - AttributeName: Sk
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+Outputs:
+  HelloWorldApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+  HelloWorldFunction:
+    Description: Hello World Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - HelloWorldFunction
+      - Arn
+  HelloWorldFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+      - HelloWorldFunctionRole
+      - Arn
