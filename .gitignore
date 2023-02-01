@@ -434,5 +434,5 @@ __pycache__/
 **/.ionide/**
 
 /Tools/LambdaTestTool/Amazon.Lambda.TestTool/ExternalCommands/App/**
-**/.aws-sam
+.aws-sam/
 
