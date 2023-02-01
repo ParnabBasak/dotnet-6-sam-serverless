@@ -436,3 +436,5 @@ __pycache__/
 /Tools/LambdaTestTool/Amazon.Lambda.TestTool/ExternalCommands/App/**
 .aws-sam/
 
+.toml
+samconfig.toml
