@@ -21,16 +21,27 @@ namespace HelloWorld
 {
     public class Function
     {
+        private readonly AmazonDynamoDBClient client;
+        private readonly DynamoDBContext dbContext;
+        private static string TABLE_NAME = Environment.GetEnvironmentVariable("TABLE_NAME");
+        
+        public Function()
+        {
+            this.client = new AmazonDynamoDBClient();
+            this.dbContext = new DynamoDBContext(client);
+        }
+        
         public async Task<APIGatewayHttpApiV2ProxyResponse?> FunctionHandler(APIGatewayHttpApiV2ProxyRequest request, ILambdaContext context)
         {
             try
             {
-                AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-                DynamoDBContext dbContext = new DynamoDBContext(client);
+                //AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+                //DynamoDBContext dbContext = new DynamoDBContext(client);
+                LambdaLogger.Log("Table Name: " + TABLE_NAME);
                 LambdaLogger.Log("request: " + JsonConvert.SerializeObject(request));
                 string idfrompath = request.PathParameters["id"];
-                //string idfrompath = "f9168c5e-ceb2-4faa-b6bf-329bf39fa1e4";
                 Guid id = new Guid(idfrompath);
+                
                 LambdaLogger.Log("id: " + id);
                 
                 var booking = await dbContext.LoadAsync<BookingDto>(id, id);
@@ -56,7 +67,11 @@ namespace HelloWorld
             catch (Exception ex)
             {
                 LambdaLogger.Log(ex.Message);
-                return null;
+                return new APIGatewayHttpApiV2ProxyResponse
+                {
+                    Body = "Error Found",
+                    StatusCode = (int)HttpStatusCode.InternalServerError,
+                };
             }
         }
     }
